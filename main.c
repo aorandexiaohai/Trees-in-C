@@ -16,8 +16,7 @@ struct node* newNode(int data)
 	node->leftChild = node->rightChild = NULL;
 	return (node);
 }
-// A utility function to right rotate subtree rooted with y
-// See the diagram given above.
+// A utility function to right rotate subtree rooted with x
 struct node *rightRotate(struct node *x)
 {
 	struct node *y = x->leftChild;
@@ -27,7 +26,6 @@ struct node *rightRotate(struct node *x)
 }
 
 // A utility function to left rotate subtree rooted with x
-// See the diagram given above.
 struct node *leftRotate(struct node *x)
 {
 	struct node *y = x->rightChild;

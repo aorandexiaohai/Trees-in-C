@@ -2,7 +2,7 @@
 #include <stdlib.h>
 struct node *root;
 struct node *search(struct node *root, int data);
-void insert(int data,struct node *root);
+struct node *insert(struct node *root,int k);
 struct node {
         int data;  
         struct node *leftChild;
@@ -19,6 +19,7 @@ struct node* newNode(int data)
 // A utility function to right rotate subtree rooted with x
 struct node *rightRotate(struct node *x)
 {
+	printf("Rotate righ node %d\n",x->data);
 	struct node *y = x->leftChild;
 	x->leftChild = y->rightChild;
 	y->rightChild = x;
@@ -28,6 +29,7 @@ struct node *rightRotate(struct node *x)
 // A utility function to left rotate subtree rooted with x
 struct node *leftRotate(struct node *x)
 {
+	printf("Rotate left node %d\n",x->data);
 	struct node *y = x->rightChild;
 	x->rightChild = y->leftChild;
 	y->leftChild = x;
@@ -38,6 +40,9 @@ struct node *leftRotate(struct node *x)
 // root. This function modifies the tree and returns the new root
 struct node *splay(struct node *root, int data)
 {
+	printf("Splay on %d,",data);
+	if(root!=NULL)
+		printf("root is %d\n",root->data);
 	// Base cases: root is NULL or key is present at root
 	if (root == NULL || root->data == data)
 		return root;
@@ -68,6 +73,7 @@ struct node *splay(struct node *root, int data)
 		}
 
 		// Do second rotation for root
+		
 		return (root->leftChild == NULL)? root: rightRotate(root);
 	}
 	else // Key lies in right subtree
@@ -128,7 +134,7 @@ int main() {
         if(count==1)
         	root = newNode(data);
         else
-			insert(data,root);
+			root=insert(root,data);
     }
     printf("Search for?:\n");
     scanf("%d", &searchData);
@@ -177,7 +183,7 @@ int main() {
    return current;
 }
 */
-void insert(int data,struct node* root) {
+/*void insert(int data,struct node* root) {
    struct node *tempNode = (struct node*) malloc(sizeof(struct node));
    struct node *current;
    struct node *parent;
@@ -216,4 +222,39 @@ void insert(int data,struct node* root) {
          }
       }           
    }
-} 
+} */
+// Function to insert a new key k in splay tree with given root
+struct node *insert(struct node *root, int k)
+{
+    // Simple Case: If tree is empty
+    if (root == NULL) return newNode(k);
+ 
+    // Bring the closest leaf node to root
+    root = splay(root, k);
+ 
+    // If key is already present, then return
+    if (root->data == k) return root;
+ 
+    // Otherwise allocate memory for new node
+    struct node *newnode  = newNode(k);
+ 
+    // If root's key is greater, make root as right child
+    // of newnode and copy the left child of root to newnode
+    if (root->data > k)
+    {
+        newnode->rightChild = root;
+        newnode->leftChild = root->leftChild;
+        root->leftChild = NULL;
+    }
+ 
+    // If root's key is smaller, make root as left child
+    // of newnode and copy the right child of root to newnode
+    else
+    {
+        newnode->leftChild = root;
+        newnode->rightChild = root->rightChild;
+        root->rightChild = NULL;
+    }
+ 
+    return newnode; // newnode becomes new root
+}

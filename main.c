@@ -1,15 +1,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 struct node *root;
-struct node *search(struct node *root, int data);
-struct node *insert(struct node *root,int k);
+struct node *search(struct node *root, unsigned int data);
+struct node *insert(struct node *root, unsigned int k);
+unsigned int ip_to_int (const char * ip);
+#define INVALID 0
 struct node {
-        int data;  
+        unsigned int data;  
         struct node *leftChild;
         struct node *rightChild;
     };
 
-struct node* newNode(int data)
+struct node* newNode(unsigned int data)
 {
 	struct node* node = (struct node*)malloc(sizeof(struct node));
 	node->data = data;
@@ -35,6 +37,8 @@ struct node *leftRotate(struct node *x)
 	y->leftChild = x;
 	return y;
 }
+// This method is to convert ip addresses to unsigned integer format, so we can
+// perform comparison operations on it.
 unsigned int ip_to_int (const char * ip)
 {
     /* The return value. */
@@ -78,7 +82,7 @@ unsigned int ip_to_int (const char * ip)
 // This function brings the data at root if key is present in tree.
 // If key is not present, then it brings the last accessed item at
 // root. This function modifies the tree and returns the new root
-struct node *splay(struct node *root, int data)
+struct node *splay(struct node *root, unsigned int data)
 {
 	printf("Splay on %d,",data);
 	if(root!=NULL)
@@ -146,7 +150,7 @@ struct node *splay(struct node *root, int data)
 // The search function for Splay tree. Note that this function
 // returns the new root of Splay Tree. If key is present in tree
 // then, it is moved to root.
-struct node *search(struct node *root, int data)
+struct node *search(struct node *root, unsigned int data)
 {
 	return splay(root, data);
 }
@@ -161,110 +165,8 @@ void preOrder(struct node *root)
 		preOrder(root->rightChild);
 	}
 }
-int main() {
-	
-    int num, count,data, searchData;
-    printf("Enter the number of integers: ");
-    scanf("%d", &num);
-    // for loop terminates when n is less than count
-    for(count = 1; count <= num; ++count)
-    {
-        //printf("Enter a positive integer: ");
-       	scanf("%d", &data);
-        if(count==1)
-        	root = newNode(data);
-        else
-			root=insert(root,data);
-    }
-    printf("Search for?:\n");
-    scanf("%d", &searchData);
-    printf("Preorder traversal of the orignal tree is ");
-    preOrder(root);
-    printf("\n");
-    root = search(root, searchData);
-    printf("Preorder traversal of the modified Splay tree is \n");
-	preOrder(root);
-	return 0;
-	
-	
-	/*struct node *root = newNode(100);
-    root->leftChild = newNode(50);
-    root->rightChild = newNode(200);
-    root->leftChild->leftChild = newNode(40);
-    root->leftChild->leftChild->leftChild = newNode(30);
-    root->leftChild->leftChild->leftChild->leftChild = newNode(20);
-	printf("Preorder traversal of the orignal tree is \n");
-    preOrder(root); 
-    root = search(root, 20);
-    root = search(root, 20);
-    printf("Preorder traversal of the modified Splay tree is \n");
-	preOrder(root);
-	return 0;*/
-}
-/*struct node* search(int data){
-   struct node *current = root;
-   printf("Visiting elements: ");
-   while(current->data != data){
-      if(current != NULL) {
-         printf("%d ",current->data);
-         //go to left tree
-         if(current->data > data){
-            current = current->leftChild;
-         }//else go to right tree
-         else {               
-            current = current->rightChild;
-         }
-         //not found
-         if(current == NULL){
-            return NULL;
-         }
-      }                                       
-   }
-   return current;
-}
-*/
-/*void insert(int data,struct node* root) {
-   struct node *tempNode = (struct node*) malloc(sizeof(struct node));
-   struct node *current;
-   struct node *parent;
-   tempNode->data = data;
-   tempNode->leftChild = NULL;
-   tempNode->rightChild = NULL;
-  
-   //if tree is empty
-   if(root == NULL) {
-   		//printf("root is null");
-      	root = tempNode;
-   } else {
-      current = root;
-      parent = NULL;
-      while(1) {               
-         parent = current;
-         //go to left of the tree
-         if(data < parent->data) {
-            current = current->leftChild;               
-            //insert to the left
-            if(current == NULL) {
-               parent->leftChild = tempNode;
-               printf("%d inserted to the left\n", data);
-               return;
-              
-            }
-         }//go to right of the tree
-         else {
-            current = current->rightChild;
-            //insert to the right
-            if(current == NULL) {
-               parent->rightChild = tempNode;
-               printf("%d inserted to the right\n", data);
-               return;
-            }
-         }
-      }           
-   }
-} */
 // Function to insert a new key k in splay tree with given root
-struct node *insert(struct node *root, int k)
+struct node *insert(struct node *root, unsigned int k)
 {
     // Simple Case: If tree is empty
     if (root == NULL) return newNode(k);
@@ -298,3 +200,34 @@ struct node *insert(struct node *root, int k)
  
     return newnode; // newnode becomes new root
 }
+
+int main() {
+	
+    int num, count,data, searchData;
+    printf("Enter the number of addresses: ");
+    scanf("%d", &num);
+    
+    // for loop terminates when n is less than count
+    for(count = 1; count <= num; ++count)
+    {
+        //printf("Enter a positive integer: ");
+       	scanf("%d", &data);
+        if(count==1)
+        	root = newNode(data);
+        else
+			root=insert(root,data);
+    }
+    printf("Search for?:\n");
+    scanf("%d", &searchData);
+    scanf("%d", &searchData);
+    printf("Preorder traversal of the orignal tree is ");
+    preOrder(root);
+    printf("\n");
+    root = search(root, searchData);
+    printf("Preorder traversal of the modified Splay tree is \n");
+	preOrder(root);
+	return 0;
+	
+}	
+
+

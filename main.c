@@ -3,7 +3,7 @@
 struct node *root;
 struct node *search(struct node *root, unsigned int data);
 struct node *insert(struct node *root, unsigned int k);
-unsigned int ip_to_int (const char * ip);
+unsigned int ip_to_int (char * ip);
 #define INVALID 0
 struct node {
         unsigned int data;  
@@ -21,7 +21,7 @@ struct node* newNode(unsigned int data)
 // A utility function to right rotate subtree rooted with x
 struct node *rightRotate(struct node *x)
 {
-	printf("Rotate righ node %d\n",x->data);
+	printf("Rotate right node 0x%08x\n",x->data);
 	struct node *y = x->leftChild;
 	x->leftChild = y->rightChild;
 	y->rightChild = x;
@@ -31,62 +31,21 @@ struct node *rightRotate(struct node *x)
 // A utility function to left rotate subtree rooted with x
 struct node *leftRotate(struct node *x)
 {
-	printf("Rotate left node %d\n",x->data);
+	printf("Rotate left node 0x%08x\n",x->data);
 	struct node *y = x->rightChild;
 	x->rightChild = y->leftChild;
 	y->leftChild = x;
 	return y;
 }
-// This method is to convert ip addresses to unsigned integer format, so we can
-// perform comparison operations on it.
-unsigned int ip_to_int (const char * ip)
-{
-    /* The return value. */
-    unsigned v = 0;
-    /* The count of the number of bytes processed. */
-    int i;
-    /* A pointer to the next digit to process. */
-    const char * start;
 
-    start = ip;
-    for (i = 0; i < 4; i++) {
-        /* The digit being processed. */
-        char c;
-        /* The value of this byte. */
-        int n = 0;
-        while (1) {
-            c = * start;
-            start++;
-            if (c >= '0' && c <= '9') {
-                n *= 10;
-                n += c - '0';
-            }
-            /* We insist on stopping at "." if we are still parsing
-               the first, second, or third numbers. If we have reached
-               the end of the numbers, we will allow any character. */
-            else if ((i < 3 && c == '.') || i == 3) {
-                break;
-            }
-            else {
-                return INVALID;
-            }
-        }
-        if (n >= 256) {
-            return INVALID;
-        }
-        v *= 256;
-        v += n;
-    }
-    return v;
-}
 // This function brings the data at root if key is present in tree.
 // If key is not present, then it brings the last accessed item at
 // root. This function modifies the tree and returns the new root
 struct node *splay(struct node *root, unsigned int data)
 {
-	printf("Splay on %d,",data);
+	printf("Splay on 0x%08x,",data);
 	if(root!=NULL)
-		printf("root is %d\n",root->data);
+		printf("root is 0x%08x\n",root->data);
 	// Base cases: root is NULL or key is present at root
 	if (root == NULL || root->data == data)
 		return root;
@@ -160,7 +119,7 @@ void preOrder(struct node *root)
 {
 	if (root != NULL)
 	{
-		printf("%d ", root->data);
+		printf("0x%08x ", root->data);
 		preOrder(root->leftChild);
 		preOrder(root->rightChild);
 	}
@@ -200,26 +159,70 @@ struct node *insert(struct node *root, unsigned int k)
  
     return newnode; // newnode becomes new root
 }
+// This method is to convert ip addresses to unsigned integer format, so we can
+// perform comparison operations on it.
+unsigned int ip_to_int (char * ip)
+{
+    /* The return value. */
+    unsigned v = 0;
+    /* The count of the number of bytes processed. */
+    int i;
+    /* A pointer to the next digit to process. */
+    const char * start;
 
+    start = ip;
+    for (i = 0; i < 4; i++) {
+        /* The digit being processed. */
+        char c;
+        /* The value of this byte. */
+        int n = 0;
+        while (1) {
+            c = * start;
+            start++;
+            if (c >= '0' && c <= '9') {
+                n *= 10;
+                n += c - '0';
+            }
+            /* We insist on stopping at "." if we are still parsing
+               the first, second, or third numbers. If we have reached
+               the end of the numbers, we will allow any character. */
+            else if ((i < 3 && c == '.') || i == 3) {
+                break;
+            }
+            else {
+                return INVALID;
+            }
+        }
+        if (n >= 256) {
+            return INVALID;
+        }
+        v *= 256;
+        v += n;
+    }
+    return v;
+}
 int main() {
 	
-    int num, count,data, searchData;
+    int num, count, searchData;
+    unsigned int data;
     printf("Enter the number of addresses: ");
     scanf("%d", &num);
-    
+    char ipAddress[16];
     // for loop terminates when n is less than count
     for(count = 1; count <= num; ++count)
     {
-        //printf("Enter a positive integer: ");
-       	scanf("%d", &data);
+        printf("Enter IP address:");
+        scanf("%s",ipAddress);
+       	//scanf("%d", &data);
+       	data=ip_to_int(ipAddress);
         if(count==1)
         	root = newNode(data);
         else
 			root=insert(root,data);
     }
     printf("Search for?:\n");
-    scanf("%d", &searchData);
-    scanf("%d", &searchData);
+    scanf("%s",ipAddress);
+    searchData=ip_to_int(ipAddress);
     printf("Preorder traversal of the orignal tree is ");
     preOrder(root);
     printf("\n");
@@ -228,6 +231,5 @@ int main() {
 	preOrder(root);
 	return 0;
 	
-}	
-
+}
 

@@ -2,13 +2,15 @@
 #include <stdlib.h>
 struct node *root;
 struct node *search(struct node *root, unsigned int data);
-struct node *insert(struct node *root, unsigned int k);
+//struct node *insert(struct node *root, unsigned int k);
 unsigned int ip_to_int (char * ip);
 #define INVALID 0
+
 struct node {
         unsigned int data;  
         struct node *leftChild;
         struct node *rightChild;
+        int height;
     };
 
 struct node* newNode(unsigned int data)
@@ -16,7 +18,24 @@ struct node* newNode(unsigned int data)
 	struct node* node = (struct node*)malloc(sizeof(struct node));
 	node->data = data;
 	node->leftChild = node->rightChild = NULL;
+	node->height = 1;
 	return (node);
+}
+// A utility function to get maximum of two integers
+int max(int a, int b);
+ 
+// A utility function to get height of the tree
+int height(struct node *N)
+{
+    if (N == NULL)
+        return 0;
+    return N->height;
+}
+ 
+// A utility function to get maximum of two integers
+int max(int a, int b)
+{
+    return (a > b)? a : b;
 }
 // A utility function to right rotate subtree rooted with x
 struct node *rightRotate(struct node *x)
@@ -37,9 +56,67 @@ struct node *leftRotate(struct node *x)
 	y->leftChild = x;
 	return y;
 }
-
-// This function brings the data at root if key is present in tree.
-// If key is not present, then it brings the last accessed item at
+// Get Balance factor of node N
+int getBalance(struct node *N)
+{
+    if (N == NULL)
+        return 0;
+    return height(N->leftChild) - height(N->rightChild);
+}
+// Recursive function to insert data in subtree rooted
+// with node and returns new root of subtree.
+struct Node* insert(struct node* node, int data)
+{
+    /* 1.  Perform the normal BST insertion */
+    if (node == NULL)
+        return(newNode(data));
+ 
+    if (data < node->data)
+        node->leftChild  = insert(node->leftChild, data);
+    else if (data > node->data)
+        node->rightChild = insert(node->rightChild, data);
+    else // Equal datas are not allowed in BST
+        return node;
+ 
+    /* 2. Update height of this ancestor node */
+    node->height = 1 + max(height(node->leftChild),
+                           height(node->rightChild));
+ 
+    /* 3. Get the balance factor of this ancestor
+          node to check whether this node became
+          unbalanced */
+    int balance = getBalance(node);
+ 
+    // If this node becomes unbalanced, then
+    // there are 4 cases
+ 
+    // Left Left Case
+    if (balance > 1 && data < node->leftChild->data)
+        return rightRotate(node);
+ 
+    // Right Right Case
+    if (balance < -1 && data > node->rightChild->data)
+        return leftRotate(node);
+ 
+    // Left Right Case
+    if (balance > 1 && data > node->leftChild->data)
+    {
+        node->leftChild =  leftRotate(node->leftChild);
+        return rightRotate(node);
+    }
+ 
+    // Right Left Case
+    if (balance < -1 && data < node->rightChild->data)
+    {
+        node->rightChild = rightRotate(node->rightChild);
+        return leftRotate(node);
+    }
+ 
+    /* return the (unchanged) node pointer */
+    return node;
+}
+// This function brings the data at root if data is present in tree.
+// If data is not present, then it brings the last accessed item at
 // root. This function modifies the tree and returns the new root
 struct node *splay(struct node *root, unsigned int data)
 {
@@ -125,7 +202,7 @@ void preOrder(struct node *root)
 	}
 }
 // Function to insert a new key k in splay tree with given root
-struct node *insert(struct node *root, unsigned int k)
+/*struct node *insert(struct node *root, unsigned int k)
 {
     // Simple Case: If tree is empty
     if (root == NULL) return newNode(k);
@@ -159,6 +236,7 @@ struct node *insert(struct node *root, unsigned int k)
  
     return newnode; // newnode becomes new root
 }
+*/
 // This method is to convert ip addresses to unsigned integer format, so we can
 // perform comparison operations on it.
 unsigned int ip_to_int (char * ip)
@@ -232,4 +310,3 @@ int main() {
 	return 0;
 	
 }
-
